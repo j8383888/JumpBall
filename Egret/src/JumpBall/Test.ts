@@ -12,7 +12,7 @@ module JumpBall {
 			super();
 			this.skinName = "MainSceneSkin"
 			this._init();
-			this.creatRectBody(360, 640, 100, 50, 0, 0)
+			this._creatRectBody(360, 640, 100, 50, 0, 0)
 		}
 
 		public static get instance(): Test {
@@ -23,14 +23,8 @@ module JumpBall {
 
 		}
 
-		/**
-		 * 创建静态刚体
-		 */
-		private _creatStaticBody(): void {
 
-		}
-
-		public creatRectBody(x, y, w, h, mess: number = 1, angularVelocity = 1): p2.Body {
+		private _creatRectBody(x, y, w, h, mess: number = 1, angularVelocity = 1): p2.Body {
 			var factor: number = 50;
 			let width = Math.floor(w / factor);
 			let height = Math.floor(h / factor);
@@ -71,7 +65,7 @@ module JumpBall {
 		private _creatWorld(): void {
 			var world: p2.World = new p2.World();
 			world.sleepMode = p2.World.BODY_SLEEPING;
-			world.defaultContactMaterial.restitution = 0.5;
+			world.defaultContactMaterial.restitution = 0.8;
 			world.gravity = [0, -9.8];
 			this.world = world;
 		}
@@ -79,17 +73,27 @@ module JumpBall {
 		/**
 		 * 创建plane
 		 */
-		private _creatPanelBody(): p2.Body {
+		private _creatPanelBody(x, y, w, h, angle): p2.Body {
+			var factor: number = 50;
+			let width = Math.floor(w / factor);
+			let height = Math.floor(h / factor);
+			let posX = x / factor;
+			let posY = y / factor;
+			let radian = UIUtil.getRadian(angle)
+			var display: egret.DisplayObject;
 			var planeShape: p2.Plane = new p2.Plane();
 			var planeBody: p2.Body = new p2.Body({
 				//刚体类型
 				type: p2.Body.STATIC,
 				//刚体的位置
-				position: [0, 0]
+				position: [posX, posY]
 			});
+			planeBody.angle = radian;
 			planeBody.addShape(planeShape);
-			planeBody.displays = [];
 			this.world.addBody(planeBody);
+			display = this.createRect(width * factor, 10);
+			planeBody.displays = [display];
+			this.addChild(display);
 			return planeBody;
 		}
 
@@ -122,12 +126,35 @@ module JumpBall {
 					}
 				}
 			}
+		}
 
+		/**
+		 * 创建矩形边缘
+		 */
+		private _creatRectBorderBody(x, y, w, h, rectW, rectH): p2.Body {
+			var factor: number = 50;
+			let width = Math.floor(w / factor);
+			let height = Math.floor(h / factor);
+			let posX = x / factor;
+			let posY = y / factor;
+			var display: egret.DisplayObject;
+			//添加方形刚体
+			var boxShape: p2.Shape = new p2.Box({ width: width, height: height });
+			var boxBody: p2.Body = new p2.Body({ mass: 0, position: [posX, posY] });
+			boxBody.addShape(boxShape);
+			this.world.addBody(boxBody);
+			display = this.createRect(rectW, rectH, ColorUtil.COLOR_SHADOW);
+			boxBody.displays = [display];
+			this.addChild(display);
+			return boxBody;
 		}
 
 		private _init(): void {
 			this._creatWorld();
-			this._creatPanelBody();
+			this._creatPanelBody(750 / 2, 50, 750, 0, 0);
+			this._creatRectBorderBody(50, 1280 / 2, 100, 1280, 100, 1280);
+			this._creatRectBorderBody(720 - 50, 1280 / 2, 100, 1280, 100, 1280);
+			this._creatRectBorderBody(720 / 2, 1280 - 50, 720, 50, 720, 50);
 			egret.Ticker.getInstance().register(this._worldLoop, this);
 
 			//鼠标点击添加刚体
@@ -137,8 +164,8 @@ module JumpBall {
 		private addRamdonOneBody(e: egret.TouchEvent): void {
 			var positionX: number = e.stageX;
 			var positionY: number = egret.MainContext.instance.stage.stageHeight - e.stageY;
-			if (Math.random() > 1) {
-				let body = this.creatRectBody(positionX, positionY, 100, 50, 1);
+			if (Math.random() > 0.5) {
+				let body = this._creatRectBody(positionX, positionY, 100, 50, 1);
 			}
 			else {
 				this.creatCircleBody(positionX, positionY, 50, 1)
@@ -160,9 +187,9 @@ module JumpBall {
 		/**
 		 * 创建一个方形
 		 */
-		private createRect(width: number, height: number): egret.Shape {
+		private createRect(width: number, height: number, color: number = ColorUtil.COLOR_GREEN): egret.Shape {
 			var shape = new egret.Shape();
-			shape.graphics.beginFill(0xfff000);
+			shape.graphics.beginFill(color);
 			shape.graphics.drawRect(0, 0, width, height);
 			shape.graphics.endFill();
 			shape.anchorOffsetX = width / 2;
