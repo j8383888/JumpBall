@@ -5,7 +5,7 @@
  * 原作者 layaBox
  * @author suo
  */
-module catchDoll {
+module JumpBall {
 	export class PoolCache {
 
 		/**

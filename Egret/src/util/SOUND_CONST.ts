@@ -1,4 +1,4 @@
-module catchDoll{
+module JumpBall{
 	export class SOUND_CONST{
 		/*背景音效*/
 		public static readonly BGM_SOUND:string = "bgm_FishingJoy_mp3";

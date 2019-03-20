@@ -4,7 +4,7 @@
  * 	由于string类型的键值已能满足大部分需求 所以单独写成一个类
  *  @author suo
  */
-module catchDoll {
+module JumpBall {
 
     export class SimpleMap<T> {
 

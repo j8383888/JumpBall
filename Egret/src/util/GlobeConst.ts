@@ -1,7 +1,7 @@
 /**
  * 全局定义
  */
-module catchDoll {
+module JumpBall {
 	export class GlobeConst {
 		/*是否调试模式*/
 		public static isDebug: boolean = false;

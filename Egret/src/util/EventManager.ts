@@ -2,7 +2,7 @@
  * 简易消息收发类
  * @author suo
  */
-module catchDoll {
+module JumpBall {
 	export class EventManager {
 
 		/*单例*/
