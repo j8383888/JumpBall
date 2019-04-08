@@ -39,11 +39,18 @@ module JumpBall {
 			var world: p2.World = new p2.World();
 			world.sleepMode = p2.World.BODY_SLEEPING;
 			world.defaultContactMaterial.restitution = 1;
+			world.defaultContactMaterial.friction = 0;
+			// world.defaultContactMaterial.frictionRelaxation = 0;
+			// world.defaultContactMaterial.relaxation = 1
+			// world.defaultContactMaterial.contactSkinSize = 0;
 			world.gravity = [0, 0];
 			this.world = world;
 			// this.m1 = new p2.Material(1000);
 			// this.m2 = new p2.Material(1001);
 			// this.cm1 = new p2.ContactMaterial(this.m1, this.m2, <p2.ContactMaterialOptions>{ restitution: 1, friction: 0.0 });
+			// this.cm1.contactSkinSize = 0
+			// this.cm1.frictionRelaxation = 0;
+			// this.cm1.relaxation = 1
 			// this.world.addContactMaterial(this.cm1);
 		}
 
@@ -59,6 +66,7 @@ module JumpBall {
 			let radian = UIUtil.getRadian(angle)
 			var display: egret.DisplayObject;
 			var planeShape: p2.Plane = new p2.Plane();
+
 			var planeBody: p2.Body = new p2.Body({
 				//刚体类型
 				type: p2.Body.STATIC,
@@ -118,6 +126,9 @@ module JumpBall {
 			let body1 = GlobeTool.creatRectBorderBody(this, 50, 1280 / 2, 100, 1280, 100, 1280);
 			let body2 = GlobeTool.creatRectBorderBody(this, 720 - 50, 1280 / 2, 100, 1280, 100, 1280);
 			let body3 = GlobeTool.creatRectBorderBody(this, 720 / 2, 1280 - 50, 720, 50, 720, 50);
+			body3.damping = body2.damping = body1.damping = 0;
+			body3.angularDamping = body2.angularDamping = body1.angularDamping = 0;
+			body3.inertia = body2.inertia = body1.inertia = 0;
 			this.world.addBody(body1)
 			this.world.addBody(body2)
 			this.world.addBody(body3)
@@ -139,16 +150,29 @@ module JumpBall {
 		}
 
 
+
 		private _onPreSolve(e): void {
 			for (var i = 0; i < e.contactEquations.length; i++) {
 				console.log("preSolve")
 				var eq: p2.ContactEquation = e.contactEquations[i];
-				if (eq.bodyA.type == p2.Body.STATIC || eq.bodyB.type == p2.Body.STATIC) {
-					eq.enabled = true;
-				}
-				else {
-					eq.enabled = false;
-				}
+				// if (eq.bodyA.type == p2.Body.STATIC || eq.bodyB.type == p2.Body.STATIC) {
+				// 	console.error("移动速度" + eq.bodyA.velocity);
+					// if (eq.bodyA.type == p2.Body.STATIC) {
+					// 	if (eq.bodyB.velocity[0] < 0) {
+					// 		eq.bodyB.velocity = [-10, 0];
+					// 	}
+					// }
+					// else if (eq.bodyB.type == p2.Body.STATIC) {
+					// 	if (eq.bodyA.velocity[0] > 0) {
+					// 		eq.bodyA.velocity = [10, 0];
+					// 	}
+					// }
+
+				// 	eq.enabled = true;
+				// }
+				// else {
+				// 	eq.enabled = false;
+				// }
 			}
 		}
 
@@ -160,10 +184,12 @@ module JumpBall {
 				this.world.addBody(body);
 			}
 			else {
-				let body = GlobeTool.creatCircleBody(this, positionX, positionY, 50, 1)
+				let body = GlobeTool.createTrianglesBody(this, positionX, positionY, 50, 0)
 				body.gravityScale = 0;
-				body.velocity = [0, 10]
-				// body.
+				body.angularDamping = 0
+				body.damping = 0;
+				body.inertia = 0;
+				body.velocity = [10, 0]
 
 				this.world.addBody(body);
 			}

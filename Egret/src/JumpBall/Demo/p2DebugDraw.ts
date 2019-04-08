@@ -156,7 +156,7 @@ class p2DebugDraw {
 
         var worldPoint: number[] = new Array();
         b.toWorldFrame(worldPoint, shape.vertices[0]);
-        //g.moveTo(worldPoint[0], worldPoint[1]);
+        // g.moveTo(worldPoint[0], worldPoint[1]);
         g.moveTo(b.position[0], b.position[1]);
         g.lineTo(worldPoint[0], worldPoint[1]);
         for (var i: number = 1; i <= l; i++) {

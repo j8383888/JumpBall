@@ -108,6 +108,8 @@ class Main extends eui.UILayer {
         // this.addChild(demo1);
         // let demo2: JumpBall.Demo2 = new JumpBall.Demo2();
         // this.addChild(demo2);
+        // let testFromPolygon = new TestFromPolygon();
+        // this.addChild(testFromPolygon);
 
     }
     /**

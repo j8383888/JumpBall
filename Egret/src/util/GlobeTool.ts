@@ -82,21 +82,46 @@ module JumpBall {
 			return boxBody;
 		}
 
+		/**
+		 * 圆形刚体
+		 */
 		public static creatCircleBody(view, x, y, r, mess = 0, angularVelocity = 1): p2.Body {
 			var factor: number = 50;
 			let radius = Math.floor(r / factor);
 			let posX = Math.floor(x / factor);
 			let posY = Math.floor(y / factor);
 			var display: egret.DisplayObject;
-			//添加方形刚体
+
 			var circleShape: p2.Shape = new p2.Circle({ radius: radius });
-			// circleShape.material = new p2.Material(1000);
-			var boxBody: p2.Body = new p2.Body({ mass: mess, position: [posX, posY], angularVelocity: angularVelocity });
-			boxBody.addShape(circleShape);
+			// circleShape.material = new p2.Material(1001);
+			var nody: p2.Body = new p2.Body({ mass: mess, position: [posX, posY], angularVelocity: angularVelocity });
+			nody.addShape(circleShape);
 			display = this.createBall(radius * factor);
-			boxBody.displays = [display];
+			nody.displays = [display];
 			view.addChild(display);
-			return boxBody;
+			return nody;
+		}
+
+		/**
+		 * 创建三角形
+		 */
+		public static createTrianglesBody(view, x, y, mess = 0, angularVelocity = 1): p2.Body {
+			var factor: number = 50;
+			let posX = Math.floor(x / factor);
+			let posY = Math.floor(y / factor);
+			let pos1 = [0, 0];
+			let pos2 = [0, -2];
+			let pos3 = [2, 0];
+	
+			let vertices: number[][] = [pos1, pos2, pos3];
+			let convex: p2.Convex = new p2.Convex({ vertices: vertices });
+			var body: p2.Body = new p2.Body({ mass: mess, position: [posX, posY], angularVelocity: angularVelocity });
+			// body.fromPolygon(vertices, { optimalDecomp: false });
+			body.addShape(convex);
+			var display: egret.DisplayObject = this.drawConvex(vertices, ColorUtil.COLOR_RED);
+			body.displays = [display];
+			view.addChild(display);
+			return body;
 		}
 
 		/**
@@ -122,6 +147,40 @@ module JumpBall {
 			shape.graphics.endFill();
 			shape.anchorOffsetX = r;
 			shape.anchorOffsetY = r;
+			return shape;
+		}
+
+		/**
+     	 * 创建一个三角形
+     	 */
+		public static createTriangles(p1, p2, p3): egret.Shape {
+			var shape = new egret.Shape();
+			let g = shape.graphics;
+			g.lineStyle(1, ColorUtil.COLOR_GOLD);
+			g.moveTo(p1[0], p1[1]);
+			g.lineTo(p2[0], p2[1]);
+			g.lineTo(p3[0], p3[1]);
+			g.lineTo(p1[0], p1[1]);
+			g.endFill();
+			// shape.anchorOffsetX = -50;
+			// shape.anchorOffsetY = -50;
+			return shape
+		}
+
+		public static drawConvex(vertices: number[][], color: number, alpha: number = 1, fillColor: boolean = true): egret.Shape {
+			let factor = 50
+			let shape: egret.Shape = new egret.Shape();
+			shape.graphics.lineStyle(1, color);
+			if (fillColor) shape.graphics.beginFill(color, alpha);
+
+			var l: number = vertices.length;
+			var worldPoint: number[] = vertices[0];
+			shape.graphics.moveTo(worldPoint[0] * factor, worldPoint[1] * factor);
+			for (var i: number = 1; i <= l; i++) {
+				worldPoint = vertices[i % l];
+				shape.graphics.lineTo(worldPoint[0] * factor, worldPoint[1] * factor);
+			}
+			shape.graphics.endFill();
 			return shape;
 		}
 

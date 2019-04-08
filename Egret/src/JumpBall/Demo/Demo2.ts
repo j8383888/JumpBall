@@ -60,7 +60,7 @@ module JumpBall {
 			this.world.step(60 / 1000);
 			this.debugDraw.drawDebug();
 		}
-		private types: string[] = ["box", "circle", "capsule", "line", "particle"]
+		private types: string[] = [/*"box", "circle", "capsule", "line", "particle",*/ "triangles"]
 		private addOneBox(e: egret.TouchEvent): void {
 			var positionX: number = Math.floor(e.stageX);
 			var positionY: number = Math.floor(e.stageY);
@@ -70,6 +70,8 @@ module JumpBall {
 			var shapeType = this.types[Math.floor((Math.random() * this.types.length))];
 			//shapeType = "particle";
 			switch (shapeType) {
+
+
 				case "box":
 					//shape = new p2.Rectangle(Math.random() * 150 + 50, 100);
 					shape = new p2.Box({ width: Math.random() * 150 + 50, height: 100 });
@@ -89,6 +91,15 @@ module JumpBall {
 				case "particle":
 					shape = new p2.Particle();
 					break;
+
+				case "triangles":
+					let pos1 = [0, 0];
+					let pos2 = [0, -100];
+					let pos3 = [100, 0];
+					let vertices: number[][] = [pos1, pos2, pos3];
+					shape = new p2.Convex({ vertices: vertices });
+					break;
+
 			}
 			body.addShape(shape);
 			this.world.addBody(body);
